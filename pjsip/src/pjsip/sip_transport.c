@@ -1979,6 +1979,8 @@ PJ_DEF(pj_status_t) pjsip_tpmgr_acquire_transport2(pjsip_tpmgr *mgr,
     pjsip_tpfactory *factory;
     pj_status_t status;
 
+    int voip_perf_one_socket_call = 1;
+
     TRACE_((THIS_FILE,"Acquiring transport type=%s, remote=%s:%d",
 		       pjsip_transport_get_type_name(type),
 		       addr_string(remote),
@@ -1989,7 +1991,7 @@ PJ_DEF(pj_status_t) pjsip_tpmgr_acquire_transport2(pjsip_tpmgr *mgr,
     /* If transport is specified, then just use it if it is suitable
      * for the destination.
      */
-    if (sel && sel->type == PJSIP_TPSELECTOR_TRANSPORT &&
+    if (!voip_perf_one_socket_call && sel && sel->type == PJSIP_TPSELECTOR_TRANSPORT &&
 	sel->u.transport) 
     {
 	pjsip_transport *seltp = sel->u.transport;
@@ -2048,6 +2050,10 @@ PJ_DEF(pj_status_t) pjsip_tpmgr_acquire_transport2(pjsip_tpmgr *mgr,
 
 	transport = (pjsip_transport*)
 		    pj_hash_get(mgr->table, &key, key_len, NULL);
+
+	// voip_perf
+	if (voip_perf_one_socket_call) transport = NULL;
+	// voip_perf
 
 	if (transport == NULL) {
 	    unsigned flag = pjsip_transport_get_flag_from_type(type);

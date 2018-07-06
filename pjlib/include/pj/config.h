@@ -581,6 +581,8 @@
  * aware of this constant, to make sure that the program will not break when
  * the underlying implementation changes.
  */
+
+#define PJ_IOQUEUE_MAX_HANDLES	(1024)
 #ifndef PJ_IOQUEUE_MAX_HANDLES
 #   define PJ_IOQUEUE_MAX_HANDLES	(64)
 #endif
